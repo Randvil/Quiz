@@ -7,6 +7,7 @@ using UnityEngine.UI;
 public class QuizUI : MonoBehaviour
 {
     [SerializeField] private RawImage background;
+    [SerializeField] private Button startGameButton;
     [SerializeField] private GameObject questionObject;
     [SerializeField] private TextMeshProUGUI questionField;
     [SerializeField] private AnswersUI answersUI;
@@ -15,7 +16,7 @@ public class QuizUI : MonoBehaviour
     [SerializeField] private string incorrectAnswerText = "Incorrect";
     [SerializeField] private Button nextQuestionButton;
     [SerializeField] private TextMeshProUGUI score;
-    [SerializeField] private Button exitButton;
+    [SerializeField] private Button restartButton;
 
     private List<QuizQuestion> quizQuestions;
     private int currentQuestionNumber;
@@ -28,14 +29,16 @@ public class QuizUI : MonoBehaviour
         nextQuestionButton.gameObject.SetActive(false);
         isAnswerCorrectField.gameObject.SetActive(false);
         score.gameObject.SetActive(false);
-        exitButton.gameObject.SetActive(false);
+        restartButton.gameObject.SetActive(false);
+        startGameButton.gameObject.SetActive(true);
 
+        startGameButton.onClick.AddListener(StartQuiz);
+        restartButton.onClick.AddListener(OnRestartButtonPress);
         nextQuestionButton.onClick.AddListener(MoveToNextQuestion);
         answersUI.AnswerSelectEvent.AddListener(OnAnswerSelect);
-        exitButton.onClick.AddListener(() => Application.Quit());
     }
 
-    public void StartQuiz(List<QuizQuestion> quizQuestions)
+    public void SetQuestions(List<QuizQuestion> quizQuestions)
     {
         if (quizQuestions.Count == 0)
         {
@@ -45,17 +48,21 @@ public class QuizUI : MonoBehaviour
         }
 
         this.quizQuestions = quizQuestions;
+    }
+
+    public void StartQuiz()
+    {
         currentQuestionNumber = 0;
+        rightAnswerCounter = 0;
 
+        startGameButton.gameObject.SetActive(false);
         questionObject.SetActive(true);
-
         ShowQuestion(currentQuestionNumber);
     }
 
     public void BreakQuiz()
     {
         questionObject.SetActive(false);
-
         nextQuestionButton.gameObject.SetActive(false);
         isAnswerCorrectField.gameObject.SetActive(false);
 
@@ -69,7 +76,7 @@ public class QuizUI : MonoBehaviour
         BreakQuiz();
         ShowScore();
 
-        exitButton.gameObject.SetActive(true);
+        restartButton.gameObject.SetActive(true);
     }
 
     private void ShowQuestion(int number)
@@ -128,5 +135,12 @@ public class QuizUI : MonoBehaviour
     {
         score.gameObject.SetActive(true);
         score.text = $"{rightAnswerCounter} / {quizQuestions.Count}";
+    }
+
+    private void OnRestartButtonPress()
+    {
+        startGameButton.gameObject.SetActive(true);
+        score.gameObject.SetActive(false);
+        restartButton.gameObject.SetActive(false);
     }
 }

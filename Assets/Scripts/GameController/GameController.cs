@@ -38,6 +38,6 @@ public class GameController : MonoBehaviour
 
         quizUI = Instantiate(quizUIPrefab);
 
-        quizUI.StartQuiz(quizQuestions);
+        quizUI.SetQuestions(quizQuestions);
     }
 }
